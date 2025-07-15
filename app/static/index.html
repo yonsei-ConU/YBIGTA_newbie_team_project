@@ -5,11 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
     <style>
+        
         body {
+            background: linear-gradient(-45deg, #a6d6f2, #1c5d99, #a6d6f2, #1c5d99);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
             font-family: Arial, sans-serif;
             margin: 20px;
             text-align: center;
         }
+        @keyframes gradientBG {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
+        }
+
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -29,20 +45,31 @@
             margin: 5px 0;
             width: 80%;
             font-size: 16px;
+            background-color: #f2f4f8; /* 살짝 회색 느낌 */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
         }
+
         button {
             padding: 10px 20px;
             margin: 10px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
         .section {
             margin-bottom: 30px;
         }
+        
     </style>
 </head>
 <body>
     <div class="container" id="login-screen">
+        <img src="ybigta.png" alt="YBIGTA Logo" width="150" style="margin-bottom: 10px;" />
         <h1>User Management</h1>
         <div class="section" id="login-section">
             <h2>Login</h2>
