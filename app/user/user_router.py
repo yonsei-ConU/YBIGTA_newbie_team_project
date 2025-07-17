@@ -46,7 +46,7 @@ def delete_user(user_delete_request: UserDeleteRequest, service: UserService = D
     An API endpoint handling user deletion requests.
     """
     try:
-        deleted = service.delete_user(user_delete_request)
+        deleted = service.delete_user(user_delete_request.email)
         return BaseResponse(status="success", data=deleted, message="User Deletion Success.")
     except ValueError as e:
         raise HTTPException(status_code=404, detail="User Not Found.")
