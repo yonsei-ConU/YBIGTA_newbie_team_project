@@ -2,11 +2,35 @@ from fastapi import HTTPException
 from app.user.user_repository import UserRepository
 from app.user.user_schema import User, UserLogin, UserUpdate
 
+"""
+description:
+- UserService: 사용자 관련 비즈니스 로직을 처리하는 서비스 클래스
+- login: 사용자 로그인 처리
+- register_user: 사용자 등록 처리
+- delete_user: 사용자 삭제 처리
+- update_user_pwd: 사용자 비밀번호 업데이트 처리
+"""
+
 class UserService:
     def __init__(self, userRepoitory: UserRepository) -> None:
         self.repo = userRepoitory
 
     def login(self, user_login: UserLogin) -> User:
+        """
+        사용자 로그인을 처리합니다.
+
+        사용자의 이메일로 정보를 조회한 뒤, 입력한 비밀번호와 비교합니다.
+        일치하지 않으면 HTTP 400 예외를 발생시킵니다.
+
+        Args:
+            user_login (UserLogin): 로그인 시 필요한 사용자 이메일과 비밀번호
+
+        Returns:
+            User: 로그인에 성공한 사용자 객체
+
+        Raises:
+            HTTPException: 이메일이 존재하지 않거나 비밀번호가 틀린 경우
+        """
         # 1️⃣ 이메일로 해당 유저 정보를 Repository에서 가져옴
         user = self.repo.get_user_by_email(user_login.email)
 
@@ -28,6 +52,21 @@ class UserService:
         return user
         
     def register_user(self, new_user: User) -> User:
+        """
+        새로운 사용자를 등록합니다.
+
+        중복된 이메일이 존재할 경우 HTTP 400 예외를 발생시키며,
+        성공적으로 등록되면 사용자 정보를 반환합니다.
+
+        Args:
+            new_user (User): 등록할 사용자 정보
+
+        Returns:
+            User: 등록된 사용자 객체
+
+        Raises:
+            HTTPException: 이미 존재하는 이메일일 경우
+        """
         # 1️⃣ 이메일 중복 확인
         existing_user = self.repo.get_user_by_email(new_user.email)
         if existing_user:
@@ -44,6 +83,21 @@ class UserService:
         return new_user
 
     def delete_user(self, email: str) -> User:
+        """
+        이메일을 기반으로 사용자를 삭제합니다.
+
+        존재하지 않는 이메일일 경우 HTTP 404 예외를 발생시키며,
+        삭제된 사용자 정보를 반환합니다.
+
+        Args:
+            email (str): 삭제할 사용자의 이메일
+
+        Returns:
+            User: 삭제된 사용자 정보
+
+        Raises:
+            HTTPException: 사용자가 존재하지 않을 경우
+        """
         # 1️⃣ 이메일로 해당 유저를 조회
         user = self.repo.get_user_by_email(email)
 
