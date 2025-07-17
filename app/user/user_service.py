@@ -77,7 +77,7 @@ class UserService:
             )
 
         # 2️⃣ Repository를 통해 유저 추가 (DB 또는 JSON에 저장됨)
-        self.repo.add_user(new_user)
+        self.repo.save_user(new_user)
 
         # 3️⃣ 성공적으로 등록된 사용자 정보 반환
         return new_user
@@ -109,7 +109,7 @@ class UserService:
             )
 
         # 3️⃣ 존재하면 해당 유저를 삭제
-        self.repo.delete_user(email)
+        self.repo.delete_user(user)
 
         # 4️⃣ 삭제된 유저 정보를 반환 (삭제되기 전 정보)
         return user
@@ -133,7 +133,7 @@ class UserService:
         )
 
         # 4️⃣ Repository에 업데이트 요청 (데이터 저장)
-        self.repo.update_user(updated_user)
+        self.repo.save_user(updated_user)
 
         # 5️⃣ 바뀐 유저 정보 반환
         return updated_user
