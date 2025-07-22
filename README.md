@@ -123,7 +123,7 @@ date,rating,review
 2025-03-03,2.5,"not what I expected, but still enjoyable"
 ```
 ----------------------------------------------------------------------------------------
-##🧪 Rotten Tomatoes 리뷰 전처리 / 분석 보고
+##🧪 Rotten Tomatoes 리뷰 전처리 / 분석 보고<br>
 ###EDA: 개별 사이트 리뷰의 시각화 및 특성 설명
 📈 일별 리뷰 수 추이
     ![Daily Review Count](review_analysis/plots/daily_review_count.png)
