@@ -127,7 +127,7 @@ date,rating,review
 ### EDA: 개별 사이트 리뷰의 시각화 및 특성 설명
 ```
 📈 일별 리뷰 수 추이
-    ![Daily Review Count](review_analysis/plots/daily_review_count.png)
+    ![Daily Review Count](https://github.com/yonsei-ConU/YBIGTA_newbie_team_project/blob/master/review_analysis/plots/daily_review_count.png?raw=true)
     - 초기 집중: 4월 초부터 리뷰 수가 급증하며 최대 23개 기록  
     - 후기 감소: 5월 중순 이후 일평균 리뷰 수가 5개 이하로 급감  
     - 활성 기간: 대체로 4월 초~중순이 가장 활발하게 작성됨
