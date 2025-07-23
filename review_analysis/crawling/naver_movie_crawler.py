@@ -20,7 +20,7 @@ class NaverMovieCrawler(BaseCrawler):
         reviews (list): 크롤링한 리뷰 데이터 (date, score, text) 리스트.
     """
     def __init__(self, output_dir):
-"""
+        """
         NaverMovieCrawler 객체를 초기화한다.
 
         Args:
