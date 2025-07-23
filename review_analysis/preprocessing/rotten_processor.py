@@ -2,25 +2,40 @@ import pandas as pd
 from datetime import datetime
 from review_analysis.preprocessing.base_processor import BaseDataProcessor
 
-
 class RottenTomatoesProcessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_dir: str):
         super().__init__(input_path, output_dir)
-        self.df = pd.read_csv(self.input_path)  
-        
+        self.df = pd.read_csv(self.input_path)
+
     def preprocess(self):
-        # 점수를 2배로 (5점 만점 → 10점 만점)
+        # ✅ 점수 스케일 변환 (5점 만점 → 10점 만점)
         self.df["score"] = self.df["score"].astype(float) * 2
 
-        # 날짜를 YYYY-MM-DD 형식으로 변환
-        self.df["date"] = pd.to_datetime(self.df["date"], format="%b %d, %Y", errors="coerce").dt.strftime("%Y-%m-%d")
+        # ✅ 날짜 형식 통일 (e.g., Jul 21, 2025 → 2025-07-21)
+        self.df["date"] = pd.to_datetime(
+            self.df["date"], format="%b %d, %Y", errors="coerce"
+        ).dt.strftime("%Y-%m-%d")
 
     def feature_engineering(self):
-        # 예시: 리뷰 길이 컬럼 추가
+        # ✅ 날짜 파생 변수
+        self.df["date"] = pd.to_datetime(self.df["date"])
+        self.df["year"] = self.df["date"].dt.year
+        self.df["month"] = self.df["date"].dt.month
+        self.df["weekday"] = self.df["date"].dt.day_name()
+
+        # ✅ 리뷰 길이
         self.df["review_length"] = self.df["review"].astype(str).apply(len)
+
+        # ✅ 간단 텍스트 정제본
+        self.df["final_review"] = (
+            self.df["review"]
+            .astype(str)
+            .str.lower()
+            .str.replace(r"[^a-z0-9\s]", "", regex=True)
+            .str.strip()
+        )
 
     def save_to_database(self):
         save_path = "database/preprocessed_reviews_rotten.csv"
-        self.df = self.df[["date", "score", "review"]]
         self.df.to_csv(save_path, index=False)
         print(f"✅ 전처리된 파일 저장 완료: {save_path}")
