@@ -23,7 +23,7 @@ class RottenTomatoesCrawler(BaseCrawler):
         super().__init__(output_dir)
         self.url = "https://www.rottentomatoes.com/m/mickey_17/reviews?type=user"
         self.driver = None
-        self.reviews = []
+        self.reviews: list[tuple[str, str, str]] = []
 
     def start_browser(self):
         """
