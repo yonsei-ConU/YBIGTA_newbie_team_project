@@ -93,3 +93,10 @@ class RottenTomatoesCrawler(BaseCrawler):
         save_path = os.path.join(self.output_dir, "reviews_rotten.csv")
         df.to_csv(save_path, index=False)
         print(f"💾 저장 완료: {save_path}")
+
+    def crawl(self):
+        """
+        전체 크롤링 실행: 리뷰 수집 → 저장
+        """
+        self.scrape_reviews()
+        self.save_to_database()
