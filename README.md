@@ -138,10 +138,10 @@ uvicorn app.main:app --reload
 - 데이터 형식 `df.dtypes`
     | Column | Data Type |
     |--------|-----------|
-    | star   | int64     |
+    | scor   | float64     |
     | date   | object    |
-    | text   | object    |
-- 데이터 개수 `df.shape` : (500, 3)
+    | review | object    |
+- 데이터 개수 `df.shape` : (620, 3)
 
 **출력 예시:**
 ```
