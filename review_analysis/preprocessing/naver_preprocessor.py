@@ -1,6 +1,11 @@
 from review_analysis.preprocessing.base_processor import BaseDataProcessor
 import pandas as pd
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import normalize
+import scipy.sparse
+import numpy as np
+import os
 
 class NaverPreprocessor(BaseDataProcessor):
     """
@@ -11,9 +16,8 @@ class NaverPreprocessor(BaseDataProcessor):
     2. 결측치 제거
     3. 날짜 정제
     4. 평점 정제
-    5. 리뷰 텍스트 정제
-    6. 파생 변수 생성
-    7. 감성 분석용 텍스트 정제
+    5. 파생 변수 생성
+    6. 리뷰 텍스트 정제 및 감성 분석용 정제
     """
 
     def __init__(self, input_path: str, output_dir: str):
@@ -62,40 +66,22 @@ class NaverPreprocessor(BaseDataProcessor):
         df = df[(df['rating'] >= 0) & (df['rating'] <= 10)]
         print(f"[STEP 4] 유효하지 않은 평점 제거: {before - len(df)}")
 
-        # Step 5: 리뷰 정제
-        print("[STEP 5] 리뷰 텍스트 정제 중...")
-        df['review'] = df['review'].astype(str)
-        before = len(df)
-        df = df[df['review'].str.len().between(20, 1000)]
-        print(f"[STEP 5] 길이 기준 필터링 제거: {before - len(df)}")
-
-        def clean_text(text):
-            """
-            영어 텍스트에서 특수문자를 제거하고 소문자로 변환합니다.
-
-            Args:
-                text (str): 원본 텍스트
-
-            Returns:
-                str: 정제된 소문자 텍스트
-            """
-            text = re.sub(r'[^\w\s]', '', text)
-            return text.lower().strip()
-
-        df['cleaned_review'] = df['review'].apply(clean_text)
-
-        # Step 6: 파생 변수 생성
-        print("[STEP 6] 날짜 기반 파생 변수 생성 중...")
+        # Step 5: 파생 변수 생성 (날짜 기반)
+        print("[STEP 5] 날짜 기반 파생 변수 생성 중...")
         df['year'] = df['date'].dt.year
         df['month'] = df['date'].dt.month
         df['weekday'] = df['date'].dt.dayofweek
 
-        # Step 7: 감성 분석용 정제
-        print("[STEP 7] 감성 분석용 텍스트 정제 중 (한글 기준)...")
+        # Step 6: 리뷰 텍스트 정제 + 감성 분석용 정제
+        print("[STEP 6] 리뷰 텍스트 정제 및 감성 분석용 정제 중...")
+        df['review'] = df['review'].astype(str)
+        before = len(df)
+        df = df[df['review'].str.len().between(20, 1000)]
+        print(f"[STEP 6] 길이 기준 필터링 제거: {before - len(df)}")
 
-        def clean_korean_text(text):
+        def clean_korean_text(text: str) -> str:
             """
-            한글 텍스트에서 특수문자, 숫자, 영어 등을 제거하고
+            리뷰에서 특수문자, 숫자, 영어 등을 제거하고
             한글과 공백만 남깁니다. 다중 공백은 단일 공백으로 치환합니다.
 
             Args:
@@ -107,20 +93,52 @@ class NaverPreprocessor(BaseDataProcessor):
             text = re.sub(r'[^가-힣\s]', '', text)
             return re.sub(r'\s+', ' ', text).strip()
 
-        df['final_review'] = df['cleaned_review'].apply(clean_korean_text)
+        df['final_review'] = df['review'].apply(clean_korean_text)
+        print(f"[STEP 6] final_review 샘플 → {df['final_review'].iloc[0][:50]}...")
 
         self.data = df
         print(f"[DONE] 전처리 완료: 최종 {len(df)} rows")
 
     def feature_engineering(self):
-        """(미사용)"""
-        print("[FEATURE] 기능 엔지니어링 없음 (통과)")
+        """
+        전처리된 final_review 컬럼을 TF-IDF 벡터화하고,
+        결과를 .npz 및 .npy 파일로 저장합니다.
+        """
+        print("[TF-IDF] 벡터화 시작")
+
+        if self.data is None or 'final_review' not in self.data.columns:
+            print("[TF-IDF] ⚠️ final_review가 존재하지 않습니다. 전처리 먼저 실행하세요.")
+            return
+
+        try:
+            # 벡터화
+            vectorizer = TfidfVectorizer(max_features=1000, min_df=2)
+            X = vectorizer.fit_transform(self.data['final_review'])
+            X = normalize(X)
+
+            # 저장 경로
+            matrix_path = os.path.join(self.output_dir, "vector_matrix_tfidf.npz")
+            vocab_path = os.path.join(self.output_dir, "vocab_tfidf.npy")
+
+            # 저장
+            scipy.sparse.save_npz(matrix_path, X)
+            np.save(vocab_path, vectorizer.get_feature_names_out())
+
+            print(f"[TF-IDF] 벡터 행렬 저장 완료 → {matrix_path}")
+            print(f"[TF-IDF] 단어 목록 저장 완료 → {vocab_path}")
+            print(f"[TF-IDF] shape: {X.shape}")
+
+        except Exception as e:
+            print(f"[TF-IDF] ❌ 벡터화 실패: {e}")
+
 
     def save_to_database(self):
         """전처리 결과를 CSV로 저장"""
         output_path = f"{self.output_dir}/preprocessed_reviews_naver.csv"
         try:
-            self.data.to_csv(output_path, index=False)
+            # 컬럼 순서 지정
+            ordered_cols = ['date', 'rating', 'review', 'year', 'month', 'weekday', 'final_review']
+            self.data[ordered_cols].to_csv(output_path, index=False)
             print(f"[SAVE] 저장 완료 → {output_path}")
         except Exception as e:
             print(f"[ERROR] 저장 실패: {e}")
