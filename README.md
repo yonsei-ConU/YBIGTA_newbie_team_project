@@ -201,3 +201,51 @@ date,rating,review
         length_vs_score.png
         weekday_review_count.png
 ```
+
+# 🧩 Web 과제 - FastAPI 기반 사용자 관리 시스템
+
+이 프로젝트는 FastAPI를 기반으로 한 사용자 로그인/회원가입 시스템입니다.  
+MVC 패턴을 적용하여 구조를 나누었고, HTML 인터페이스를 포함해 실제 사용 가능한 미니 웹 서비스를 구현했습니다.
+
+### 📁 프로젝트 구조
+```
+YBIGTA_newbie_team_project/
+├── app/
+│ ├── main.py # FastAPI 실행 엔트리포인트
+│ ├── static/index.html # 사용자 인터페이스 (디자인 포함)
+│ ├── user/
+│ │ ├── user_router.py # Controller 역할
+│ │ ├── user_service.py # Service 역할
+│ │ ├── user_repository.py # Repository 역할
+│ │ └── user_schema.py # DTO (Pydantic models)
+│ └── responses/base_response.py
+├── database/users.json # 가상의 유저 DB
+├── tests/ # pytest 기반 테스트
+│ ├── test_user_router.py
+│ └── test_user_service.py
+├── requirements.txt
+```
+
+## 🎨 index.html 꾸민 내용
+
+- YBIGTA 로고 및 전체 UI 디자인 추가
+- 로그인/회원가입 폼 스타일 개선
+- 배경 그라데이션, 버튼 스타일, 사용자 환영 메시지 구현
+- 비밀번호 변경 및 계정 삭제 인터페이스 구현
+
+---
+## 🚀 코드 실행 방법
+
+### 1. 의존성 설치
+```bash
+pip install -r requirements.txt
+```
+
+### 2. FastAPI 서버 실행
+```bash
+uvicorn app.main:app --reload
+```
+
+### 3. 접속 확인
+- http://localhost:8000  
+- Swagger 문서: http://localhost:8000/docs
