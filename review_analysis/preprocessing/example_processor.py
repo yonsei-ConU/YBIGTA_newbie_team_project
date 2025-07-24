@@ -1,4 +1,4 @@
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 
 class ExampleProcessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_path: str):

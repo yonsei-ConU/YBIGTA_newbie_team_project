@@ -1,8 +1,8 @@
 import pandas as pd
 from datetime import datetime
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 
-class RottenTomatoesProcessor(BaseDataProcessor):
+class RottenTomatoesPreprocessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_dir: str):
         super().__init__(input_path, output_dir)
         self.df = pd.read_csv(self.input_path)
@@ -23,9 +23,6 @@ class RottenTomatoesProcessor(BaseDataProcessor):
         self.df["month"] = self.df["date"].dt.month
         self.df["weekday"] = self.df["date"].dt.day_name()
 
-        # ✅ 리뷰 길이
-        self.df["review_length"] = self.df["review"].astype(str).apply(len)
-
         # ✅ 간단 텍스트 정제본
         self.df["final_review"] = (
             self.df["review"]
@@ -34,6 +31,14 @@ class RottenTomatoesProcessor(BaseDataProcessor):
             .str.replace(r"[^a-z0-9\s]", "", regex=True)
             .str.strip()
         )
+
+        # ✅ 열 이름 바꾸기: score → rating
+        self.df.rename(columns={
+            "score": "rating"
+        }, inplace=True)
+
+        # ✅ 최종 열 순서 및 필터링
+        self.df = self.df[["date", "rating", "review", "year", "month", "weekday", "final_review"]]
 
     def save_to_database(self):
         save_path = "database/preprocessed_reviews_rotten.csv"
