@@ -6,8 +6,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # run this only once to download the stopwords
 # if you haven't downloaded the stopwords yet, uncomment the next two lines
-import nltk
-nltk.download('stopwords', quiet=True)
+# import nltk
+# nltk.download('stopwords', quiet=True)
 
 class LetterboxdPreprocessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_path: str):
