@@ -5,12 +5,14 @@ from typing import Dict, Type
 from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 from review_analysis.preprocessing.naver_preprocessor import NaverPreprocessor
 from review_analysis.preprocessing.rotten_preprocessor import RottenTomatoesPreprocessor
+from review_analysis.preprocessing.letterboxd_preprocessor import LetterboxdPreprocessor
 
 # 모든 preprocessing 클래스를 예시 형식으로 적어주세요. 
 # key는 "reviews_사이트이름"으로, value는 해당 처리를 위한 클래스
 PREPROCESS_CLASSES: Dict[str, Type[BaseDataProcessor]] = {
     "reviews_rotten": RottenTomatoesPreprocessor,
-    "reviews_naver": NaverPreprocessor
+    "reviews_naver": NaverPreprocessor,
+    "reviews_letterboxd": LetterboxdPreprocessor
     # 필요 시 다른 processor도 여기에 추가
 }
 
