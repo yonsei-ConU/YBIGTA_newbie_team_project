@@ -123,29 +123,33 @@ date,rating,review
 2025-03-03,2.5,"not what I expected, but still enjoyable"
 ```
 ----------------------------------------------------------------------------------------
-## 🧪 Rotten Tomatoes 리뷰 전처리 / 분석 보고<br>
+## 🧪 Rotten Tomatoes 리뷰 전처리 / 분석 보고
+
 ### EDA: 개별 사이트 리뷰의 시각화 및 특성 설명
-```
-📈 일별 리뷰 수 추이
-![Daily Review Count](https://github.com/yonsei-ConU/YBIGTA_newbie_team_project/blob/master/review_analysis/plots/daily_review_count.png?raw=true)
-    - 초기 집중: 4월 초부터 리뷰 수가 급증하며 최대 23개 기록  
-    - 후기 감소: 5월 중순 이후 일평균 리뷰 수가 5개 이하로 급감  
-    - 활성 기간: 대체로 4월 초~중순이 가장 활발하게 작성됨
 
+---
 
-📊 요일별 리뷰 수  
-    ![Review Count by Weekday](review_analysis/plots/weekday_review_count.png)  
-    - 최다 요일: 월요일과 일요일이 각 106건으로 가장 많음  
-    - 최소 요일: 금요일이 가장 적은 74건  
-    - 영화 리뷰 작성이 주말과 주 초에 집중되는 경향이 있음
+📈 **일별 리뷰 수 추이**  
+![Daily Review Count](https://raw.githubusercontent.com/yonsei-ConU/YBIGTA_newbie_team_project/master/review_analysis/plots/daily_review_count.png)  
+- 초기 집중: 4월 초부터 리뷰 수가 급증하며 최대 23개 기록  
+- 후기 감소: 5월 중순 이후 일평균 리뷰 수가 5개 이하로 급감  
+- 활성 기간: 대체로 4월 초~중순이 가장 활발하게 작성됨
 
+---
 
-📉 리뷰 길이 vs 평점  
-    ![Review Length vs Score](review_analysis/plots/length_vs_score.png)  
-    - 상관관계: 약 0.084로 매우 약한 양의 상관관계  
-    - 특이사항: 짧은 리뷰에도 높은 점수가 많은 등, 리뷰 길이와 평점은 밀접하지 않음
+📊 **요일별 리뷰 수**  
+![Review Count by Weekday](https://raw.githubusercontent.com/yonsei-ConU/YBIGTA_newbie_team_project/master/review_analysis/plots/weekday_review_count.png)  
+- 최다 요일: 월요일과 일요일이 각 106건으로 가장 많음  
+- 최소 요일: 금요일이 가장 적은 74건  
+- 영화 리뷰 작성이 주말과 주 초에 집중되는 경향이 있음
 
-```
+---
+
+📉 **리뷰 길이 vs 평점**  
+![Review Length vs Score](https://raw.githubusercontent.com/yonsei-ConU/YBIGTA_newbie_team_project/master/review_analysis/plots/length_vs_score.png)  
+- 상관관계: 약 0.084로 매우 약한 양의 상관관계  
+- 특이사항: 짧은 리뷰에도 높은 점수가 많은 등, 리뷰 길이와 평점은 밀접하지 않음
+
 ### 전처리 및 Feature Engineering 설명
 ```
     📂 대상 파일 
