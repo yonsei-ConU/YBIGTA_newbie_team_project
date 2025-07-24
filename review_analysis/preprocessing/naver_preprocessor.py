@@ -1,4 +1,4 @@
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 import pandas as pd
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
