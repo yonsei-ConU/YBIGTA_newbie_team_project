@@ -1,8 +1,13 @@
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 import pandas
 from nltk.corpus import stopwords
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+# run this only once to download the stopwords
+# if you haven't downloaded the stopwords yet, uncomment the next two lines
+# import nltk
+# nltk.download('stopwords', quiet=True)
 
 class LetterboxdPreprocessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_path: str):
@@ -15,6 +20,7 @@ class LetterboxdPreprocessor(BaseDataProcessor):
             df = pandas.read_csv(self.input_path)
         except Exception as e:
             print("CSV load failed:", e)
+            return
         # unify column names, order with other preprocessed CSVs
         df.columns = ['rating', 'date', 'review']
         df = df[['date', 'rating', 'review']]
@@ -42,10 +48,11 @@ class LetterboxdPreprocessor(BaseDataProcessor):
         df['year'] = df['date'].dt.year
         df['month'] = df['date'].dt.month
         df['weekday'] = df['date'].dt.dayofweek
-        # tf-idf
+        # temporarily remove vectorization process
+        """# tf-idf
         vectorizer = TfidfVectorizer(max_features=100)  # 최대 100개의 단어 선택
         tfidf_matrix = vectorizer.fit_transform(df['review'])
-        df['vector'] = tfidf_matrix.toarray().tolist()
+        df['vector'] = tfidf_matrix.toarray().tolist()"""
         self.data = df
 
     def save_to_database(self):
