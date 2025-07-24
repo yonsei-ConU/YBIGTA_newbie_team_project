@@ -165,6 +165,7 @@ date,rating,text
 - ⭐ 별점 환산: ★ 개수와 ½ 문자를 파싱해 10점 만점 점수로 변환
 - 🗓️ ISO 날짜 추출: <time datetime="…"> 속성에서 정확한 날짜 정보 획득
 - 💾 CSV 저장: utf-8-sig 인코딩으로 reviews_letterboxd.csv 파일 생성 (pathlib 사용)
+- 🕘 최신순 추출: 최신 리뷰 순서대로 추출
 
 **출력 예시:**
 ```
