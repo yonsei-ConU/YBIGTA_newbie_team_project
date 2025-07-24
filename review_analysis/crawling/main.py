@@ -9,11 +9,13 @@ from review_analysis.crawling.base_crawler import BaseCrawler
 # from YBIGTA_newbie_team_project.review_analysis.crawling.watcha_crawler import ExampleCrawler
 from review_analysis.crawling.RottenTomatoesCrawler import RottenTomatoesCrawler
 from review_analysis.crawling.naver_movie_crawler import NaverMovieCrawler
+from review_analysis.crawling.letterboxd_crawler import LetterboxdCrawler
 
 # 모든 크롤링 클래스를 예시 형식으로 적어주세요. 
 CRAWLER_CLASSES: Dict[str, Type[BaseCrawler]] = {
     "rotten": RottenTomatoesCrawler,
     "naver": NaverMovieCrawler,
+    "letterboxd": LetterboxdCrawler
 }
 
 def create_parser() -> ArgumentParser:
