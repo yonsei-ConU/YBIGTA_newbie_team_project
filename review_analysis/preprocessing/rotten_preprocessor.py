@@ -1,8 +1,8 @@
 import pandas as pd
 from datetime import datetime
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 
-class RottenTomatoesProcessor(BaseDataProcessor):
+class RottenTomatoesPreprocessor(BaseDataProcessor):
     def __init__(self, input_path: str, output_dir: str):
         super().__init__(input_path, output_dir)
         self.df = pd.read_csv(self.input_path)

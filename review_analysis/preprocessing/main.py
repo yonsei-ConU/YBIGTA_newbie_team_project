@@ -2,7 +2,7 @@ import os
 import glob
 from argparse import ArgumentParser
 from typing import Dict, Type
-from review_analysis.preprocessing.base_processor import BaseDataProcessor
+from review_analysis.preprocessing.base_preprocessor import BaseDataProcessor
 from review_analysis.preprocessing.naver_preprocessor import NaverPreprocessor
 from review_analysis.preprocessing.rotten_preprocessor import RottenTomatoesPreprocessor
 
