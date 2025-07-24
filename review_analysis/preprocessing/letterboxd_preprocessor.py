@@ -39,7 +39,7 @@ class LetterboxdPreprocessor(BaseDataProcessor):
             text = re.sub(r'[^a-z0-9\s]', '', text)
             return ' '.join([word for word in text.split() if word not in self.stop_words])
 
-        df['review'] = df['review'].astype(str).apply(clean_text)
+        df['final_review'] = df['review'].astype(str).apply(clean_text)
         self.data = df
     
     def feature_engineering(self):
