@@ -28,7 +28,10 @@ class LetterboxdPreprocessor(BaseDataProcessor):
         df['date'] = pandas.to_datetime(df['date'], errors='coerce')
         # trash any bad data
         df.dropna(subset=['date', 'rating', 'review'], inplace=True)
-
+        # make derived variables
+        df['year'] = df['date'].dt.year
+        df['month'] = df['date'].dt.month
+        df['weekday'] = df['date'].dt.dayofweek
         def clean_text(text):
             """
             removes special characters or stop words.
@@ -38,16 +41,11 @@ class LetterboxdPreprocessor(BaseDataProcessor):
             text = text.lower()
             text = re.sub(r'[^a-z0-9\s]', '', text)
             return ' '.join([word for word in text.split() if word not in self.stop_words])
-
         df['final_review'] = df['review'].astype(str).apply(clean_text)
         self.data = df
     
     def feature_engineering(self):
-        # make derived variables
         df = self.data
-        df['year'] = df['date'].dt.year
-        df['month'] = df['date'].dt.month
-        df['weekday'] = df['date'].dt.dayofweek
         # temporarily remove vectorization process
         """# tf-idf
         vectorizer = TfidfVectorizer(max_features=100)  # 최대 100개의 단어 선택
