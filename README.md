@@ -32,138 +32,137 @@ YBIGTA를 통해 함께 배우고 성장해나가고 싶습니다!
 - 이름: **이재열**
 - 학번: **24학번**
 - 전공: **컴퓨터과학과**
-- MBTI: **???**
+- MBTI: **????**
 
 차분한 에너지로 팀워크에 기여하며, 컴퓨터과학에 대한 깊은 관심을 가지고 있는 팀원입니다.
 
-# 🎬 Rotten Tomatoes & Naver Movie Review & letterboxed Crawlers
+# 🧩 Web 과제 - FastAPI 기반 사용자 관리 시스템
 
-이 프로젝트는 **Selenium**과 **BeautifulSoup**을 활용하여 영화 **"Mickey 17 (2025)"**에 대한 유저 리뷰를 수집하는 크롤러입니다.  
-총 3개의 크롤러가 포함되어 있으며, 각각 Rotten Tomatoes와 Naver Movie, letterboxd의 유저 리뷰를 수집합니다.  
-수집된 데이터는 평점, 날짜, 리뷰 내용이 포함된 **CSV 파일**로 저장됩니다.
+이 프로젝트는 FastAPI를 기반으로 한 사용자 로그인/회원가입 시스템입니다.  
+MVC 패턴을 적용하여 구조를 나누었고, HTML 인터페이스를 포함해 실제 사용 가능한 미니 웹 서비스를 구현했습니다.
+
+### 📁 프로젝트 구조
+```
+YBIGTA_newbie_team_project/
+├── app/
+│ ├── main.py # FastAPI 실행 엔트리포인트
+│ ├── static/index.html # 사용자 인터페이스 (디자인 포함)
+│ ├── user/
+│ │ ├── user_router.py # Controller 역할
+│ │ ├── user_service.py # Service 역할
+│ │ ├── user_repository.py # Repository 역할
+│ │ └── user_schema.py # DTO (Pydantic models)
+│ └── responses/base_response.py
+├── database/users.json # 가상의 유저 DB
+├── tests/ # pytest 기반 테스트
+│ ├── test_user_router.py
+│ └── test_user_service.py
+├── requirements.txt
+```
+
+## 🎨 index.html 꾸민 내용
+
+- YBIGTA 로고 및 전체 UI 디자인 추가
+- 로그인/회원가입 폼 스타일 개선
+- 배경 그라데이션, 버튼 스타일, 사용자 환영 메시지 구현
+- 비밀번호 변경 및 계정 삭제 인터페이스 구현
+
+---
+## 🚀 코드 실행 방법
+
+### 1. 의존성 설치
+```bash
+pip install -r requirements.txt
+```
+
+### 2. FastAPI 서버 실행
+```bash
+uvicorn app.main:app --reload
+```
+
+### 3. 접속 확인
+- http://localhost:8000  
+- Swagger 문서: http://localhost:8000/docs
+
+
+# 🎬 YBIGTA 27기 팀플 3조 – Movie Review Crawlers
+
+안녕하세요! YBIGTA 27기 팀플 **3조**입니다!  
+이 프로젝트는 영화 **"Mickey 17 (2025)"**에 대한 유저 리뷰를 수집하는 **웹 크롤러 구현 과제**입니다.  
+총 3개의 사이트 **(Rotten Tomatoes, Naver Movie, Letterboxd)** 를 대상으로  
+**Selenium**과 **BeautifulSoup**을 활용하여 리뷰를 수집하며,  
+수집된 리뷰는 `score`, `date`, `review` 컬럼을 포함한 **CSV 파일**로 저장됩니다.
 
 ---
 
-## 🍅 Rotten Tomatoes Review Crawler
+## 📁 디렉토리 구조
 
-🔗 [크롤링 대상 링크](https://www.rottentomatoes.com/m/mickey_17/reviews?type=user)
-
-### 📁 프로젝트 구조
 ```
 review_analysis/
 └── crawling/
     ├── RottenTomatoesCrawler.py
+    ├── naver_movie_crawler.py
+    ├── letterboxd_crawler.py
     ├── base_crawler.py
     └── main.py
+
 database/
-└── reviews_rotten.csv
-```
-
-### ⚙️ 설치 및 실행
-
-```bash
-# 필수 패키지 설치
-pip install selenium webdriver-manager beautifulsoup4 pandas
-
-# 실행 명령어
-python review_analysis/crawling/main.py -o database -c rotten
-```
-
-### ✨ 주요 기능
-- 🎞️ 대상 영화: **Mickey 17 (2025)**
-- ✅ 최대 500개 이상의 유저 리뷰 자동 수집
-- 🔁 `"Load More"` 버튼 자동 클릭 (최대 30회)
-- 📄 `score`, `date`, `review` 컬럼 포함한 CSV 저장
-
-### 📌 출력 예시
-```
-score,date,review
-3.5,"Jul 17, 2025","Amazing movie! Loved the cast..."
+├── reviews_rotten.csv
+├── reviews_naver.csv
+└── reviews_letterboxd.csv
 ```
 
 ---
 
-## 🎥 Naver Movie Review Crawler
+## ⚙️ 설치 및 실행 방법
 
-🔗 [크롤링 대상 링크](https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&mra=bkEw&pkid=68&os=29816634&qvt=0&query=미키%2017%20관람평)
-
-### 📁 프로젝트 구조
-```
-review_analysis/
-└── crawling/
-    ├── naver_movie_crawler.py
-    ├── base_crawler.py
-    └── main.py
-database/
-└── reviews_naver.csv
-```
-
-### ⚙️ 설치 및 실행
-
+### 1️⃣ 필수 패키지 설치
 ```bash
-# 필수 패키지 설치
 pip install selenium webdriver-manager beautifulsoup4 pandas
+```
 
-# 실행 명령어
+※ `nltk`가 필요한 경우:
+```bash
+pip install nltk
+python -m nltk.downloader stopwords
+```
+
+---
+
+### 2️⃣ 단일 크롤러 실행 예시
+```bash
+# Rotten Tomatoes
+python review_analysis/crawling/main.py -o database -c rotten
+
+# Naver Movie
 python review_analysis/crawling/main.py -o database -c naver
-```
 
-### ✨ 주요 기능
-- 🎞️ 대상 영화: **미키 17 (2025)**
-- 🔄 최신순 + 공감순 리뷰 모두 수집
-- 📜 무한 스크롤 방식으로 리뷰 500개 이상 확보
-- 📄 `score`, `date`, `review` 컬럼 포함된 CSV 저장
-- 🚫 중복 리뷰 자동 제거
-
-### 📌 출력 예시
-```
-date,rating,text
-2025-02-28,10,"외계인 생물도 뻥카를 칠 수있다."
-2025-03-01,8,"로버튼 패티슨의 1인 2역은 신의 한수다..."
-```
-
-## 📦 Letterboxd Review Crawler
-
-🔗 [크롤링 대상 링크](<Letterboxd 영화 리뷰 페이지 링크>)
-
-### 📁 프로젝트 구조
-```
-review_analysis/
-└── crawling/
-    ├── letterboxd_crawler.py
-    ├── base_crawler.py
-    └── main.py
-database/
-└── reviews_letterboxd.csv
-```
-
-### ⚙️ 설치 및 실행
-
-```bash
-# 필수 패키지 설치
-pip install selenium webdriver-manager beautifulsoup4 pandas
-
-# 실행 명령어
+# Letterboxd
 python review_analysis/crawling/main.py -o database -c letterboxd
 ```
 
-### ✨ 주요 기능
-- 🎞️ 대상 영화: **Mickey 17 (2025)**
-- 🧭 유저 리뷰 500개 이상 자동 수집
-- 🔁 페이지네이션 또는 무한 스크롤 처리
-- 📄 `score`, `date`, `review` 컬럼 포함한 CSV 저장
-- 🚫 중복 리뷰 자동 제거 (선택사항)
+---
 
-### 📌 출력 예시
+### 3️⃣ 전체 크롤러 실행
+```bash
+python review_analysis/crawling/main.py -o database --all
 ```
-date,rating,review
-2025-03-02,4.0,"visually stunning and surprisingly emotional..."
-2025-03-03,2.5,"not what I expected, but still enjoyable"
-```
+
+---
+
+## ✨ 기능 요약
+
+- 🎞️ 대상 영화: **Mickey 17 (2025)**
+- ✅ 각 사이트에서 유저 리뷰 **500개 이상** 수집
+- 🔁 Load More 버튼 클릭, 무한 스크롤, 페이지네이션 등 자동화 처리
+- 📄 `score`, `date`, `review` 컬럼 포함된 CSV 저장
+- 🚫 중복 리뷰 자동 제거 (사이트에 따라 적용)
+
 ----------------------------------------------------------------------------------------
+
 # 전처리
 
-## 🧪 Rotten Tomatoes 리뷰 전처리 / 분석 보고
+## 🧪 Rotten Tomatoes 리뷰 전처리 
 
 ### EDA: 개별 사이트 리뷰의 시각화 및 특성 설명
 
@@ -246,50 +245,5 @@ date,rating,review
         weekday_review_count.png
 ```
 
-# 🧩 Web 과제 - FastAPI 기반 사용자 관리 시스템
 
-이 프로젝트는 FastAPI를 기반으로 한 사용자 로그인/회원가입 시스템입니다.  
-MVC 패턴을 적용하여 구조를 나누었고, HTML 인터페이스를 포함해 실제 사용 가능한 미니 웹 서비스를 구현했습니다.
-
-### 📁 프로젝트 구조
-```
-YBIGTA_newbie_team_project/
-├── app/
-│ ├── main.py # FastAPI 실행 엔트리포인트
-│ ├── static/index.html # 사용자 인터페이스 (디자인 포함)
-│ ├── user/
-│ │ ├── user_router.py # Controller 역할
-│ │ ├── user_service.py # Service 역할
-│ │ ├── user_repository.py # Repository 역할
-│ │ └── user_schema.py # DTO (Pydantic models)
-│ └── responses/base_response.py
-├── database/users.json # 가상의 유저 DB
-├── tests/ # pytest 기반 테스트
-│ ├── test_user_router.py
-│ └── test_user_service.py
-├── requirements.txt
-```
-
-## 🎨 index.html 꾸민 내용
-
-- YBIGTA 로고 및 전체 UI 디자인 추가
-- 로그인/회원가입 폼 스타일 개선
-- 배경 그라데이션, 버튼 스타일, 사용자 환영 메시지 구현
-- 비밀번호 변경 및 계정 삭제 인터페이스 구현
-
----
-## 🚀 코드 실행 방법
-
-### 1. 의존성 설치
-```bash
-pip install -r requirements.txt
-```
-
-### 2. FastAPI 서버 실행
-```bash
-uvicorn app.main:app --reload
-```
-
-### 3. 접속 확인
-- http://localhost:8000  
-- Swagger 문서: http://localhost:8000/docs
+# 분석
