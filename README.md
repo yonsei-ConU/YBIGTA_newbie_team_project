@@ -144,7 +144,7 @@ score,date,review
 
 ### 🎥 Naver Movie
 
-- 🔗 [관람평 페이지 링크](https://search.naver.com/search.naver?...query=미키%2017%20관람평)
+- 🔗 [관람평 페이지 링크](https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&mra=bkEw&pkid=68&os=29816634&qvt=0&query=미키%2017%20관람평)
 - 🔄 **최신순 + 공감순** 정렬 리뷰를 병합 수집
 - 📜 **무한 스크롤** 방식 구현 (각 정렬 기준 최대 300개 수집)
 - 🚫 중복 리뷰 자동 제거 포함
@@ -161,16 +161,16 @@ date,rating,text
 
 ### 📦 Letterboxd
 
-- 🔗 [리뷰 페이지 링크](*링크 입력 필요*)
-- 🔄 **무한 스크롤 또는 페이지네이션** 자동 처리
-- 🚫 중복 리뷰 제거 여부는 선택사항 (기본 OFF)
-- 📝 리뷰 포맷이 자유롭고 캐주얼한 경향
+- 🔗 [리뷰 페이지 링크](https://letterboxd.com/film/mickey-17/reviews/)
+- ⭐ 별점 환산: ★ 개수와 ½ 문자를 파싱해 10점 만점 점수로 변환
+- 🗓️ ISO 날짜 추출: <time datetime="…"> 속성에서 정확한 날짜 정보 획득
+- 💾 CSV 저장: utf-8-sig 인코딩으로 reviews_letterboxd.csv 파일 생성 (pathlib 사용)
 
 **출력 예시:**
 ```
-date,rating,review
-2025-03-02,4.0,"visually stunning and surprisingly emotional..."
-2025-03-03,2.5,"not what I expected, but still enjoyable"
+star,date,text
+6,2025-04-26,Cool concept and some funny moments but drags on WAYYYY too long
+10,2025-07-23,The relationship between Nasha and the two Mickeys gave Challengers energy.
 ```
 
 ---
