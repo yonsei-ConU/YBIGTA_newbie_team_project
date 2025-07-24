@@ -66,7 +66,7 @@ class LetterboxdCrawler(BaseCrawler):
         out = Path(self.output_dir)
         out.mkdir(parents=True, exist_ok=True)
         df = pd.DataFrame(self.reviews)
-        df.to_csv(out / "reviews_letterboxd_mickey17.csv", index=False, encoding="utf-8-sig")
+        df.to_csv(out / "reviews_letterboxd.csv", index=False, encoding="utf-8-sig")
         print("Saved CSV → %s", out)
 
     @staticmethod
