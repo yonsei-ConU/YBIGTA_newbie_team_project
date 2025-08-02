@@ -1,33 +1,78 @@
-import json
-
-from typing import Dict, Optional
-
+from typing import Optional
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.user.user_schema import User
-from app.config import USER_DATA
+
 
 class UserRepository:
-    def __init__(self) -> None:
-        self.users: Dict[str, dict] = self._load_users()
+    """
+    사용자 관련 MySQL 쿼리를 수행하는 저장소 클래스.
+    SQLAlchemy 세션을 이용하여 사용자 생성, 조회, 삭제 등의 기능을 수행한다.
+    """
 
-    def _load_users(self) -> Dict[str, Dict]:
-        try:
-            with open(USER_DATA, "r") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            raise ValueError("File not found")
+    def __init__(self, db: Session):
+        """
+        :param db: SQLAlchemy 세션 객체
+        """
+        self.db = db
 
     def get_user_by_email(self, email: str) -> Optional[User]:
-        user = self.users.get(email)
-        return User(**user) if user else None
+        """
+        이메일 주소를 기준으로 사용자를 조회한다.
 
-    def save_user(self, user: User) -> User: 
-        self.users[user.email] = user.model_dump()
-        with open(USER_DATA, "w") as f:
-            json.dump(self.users, f)
+        :param email: 조회할 사용자의 이메일 주소
+        :return: User 객체 또는 None
+        """
+        sql = text("SELECT email, password, username FROM users WHERE email = :email")
+        result = self.db.execute(sql, {"email": email}).fetchone()
+
+        if result:
+            return User(
+                email=result.email,
+                password=result.password,
+                username=result.username
+            )
+        return None
+
+    def save_user(self, user: User) -> User:
+        """
+        사용자 정보를 저장한다. 기존 사용자가 있으면 업데이트, 없으면 삽입한다.
+
+        :param user: 저장할 사용자 (Pydantic User 객체)
+        :return: 저장된 사용자 (User 객체)
+        """
+        existing_user = self.get_user_by_email(user.email)
+
+        if existing_user:
+            sql = text("""
+                UPDATE users 
+                SET password = :password, username = :username 
+                WHERE email = :email
+            """)
+        else:
+            sql = text("""
+                INSERT INTO users (email, password, username) 
+                VALUES (:email, :password, :username)
+            """)
+
+        self.db.execute(sql, {
+            "email": user.email,
+            "password": user.password,
+            "username": user.username
+        })
+        self.db.commit()
+
         return user
 
     def delete_user(self, user: User) -> User:
-        del self.users[user.email]
-        with open(USER_DATA, "w") as f:
-            json.dump(self.users, f)
+        """
+        이메일 주소를 기준으로 사용자를 삭제한다.
+
+        :param user: 삭제할 사용자 (User 객체)
+        :return: 삭제된 사용자 (User 객체)
+        """
+        sql = text("DELETE FROM users WHERE email = :email")
+        self.db.execute(sql, {"email": user.email})
+        self.db.commit()
+
         return user
