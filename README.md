@@ -120,7 +120,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 💡 사이트별 크롤링 특징
+## 💡 사이트별 크롤링 특징 및 데이터 소개
 
 ### 🍅 Rotten Tomatoes
 
@@ -128,6 +128,13 @@ uvicorn app.main:app --reload
 - 🔁 `"Load More"` 버튼 최대 30회 클릭 자동화
 - 🌐 미국 사이트 특성상 영어 리뷰가 다수
 - ✅ 간결하고 깔끔한 HTML 구조
+- 데이터 형식 `df.dtypes`
+    | Column | Data Type |
+    |--------|-----------|
+    | scor   | float64     |
+    | date   | object    |
+    | review | object    |
+- 데이터 개수 `df.shape` : (620, 3)
 
 **출력 예시:**
 ```
@@ -144,8 +151,7 @@ score,date,review
 - 📜 **무한 스크롤** 방식 구현 (각 정렬 기준 최대 300개 수집)
 - 🚫 중복 리뷰 자동 제거 포함
 - ⚠️ HTML 구조가 자주 변경되므로 유지보수 필요
-<<<<<<< Updated upstream
-=======
+
 - 데이터 형식 `df.dtypes`
     | Column | Data Type |
     |--------|-----------|
@@ -153,7 +159,7 @@ score,date,review
     | date   | object    |
     | text   | object    |
 - 데이터 개수 `df.shape` : (576, 3)
->>>>>>> Stashed changes
+
 
 **출력 예시:**
 ```
@@ -171,6 +177,13 @@ date,rating,text
 - 🗓️ ISO 날짜 추출: <time datetime="…"> 속성에서 정확한 날짜 정보 획득
 - 💾 CSV 저장: utf-8-sig 인코딩으로 reviews_letterboxd.csv 파일 생성 (pathlib 사용)
 - 🕘 최신순 추출: 최신 리뷰 순서대로 추출
+- 데이터 형식 `df.dtypes`
+    | Column | Data Type |
+    |--------|-----------|
+    | star   | int64     |
+    | date   | object    |
+    | text   | object    |
+- 데이터 개수 `df.shape` : (500, 3)
 
 **출력 예시:**
 ```
