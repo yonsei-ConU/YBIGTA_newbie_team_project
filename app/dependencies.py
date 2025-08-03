@@ -4,7 +4,7 @@ from fastapi import Depends
 
 from database.mysql_connection import SessionLocal
 from app.user.user_repository import UserRepository
-from app.user.user_repository import UserService
+from app.user.user_service import UserService  # ✅ 수정된 import
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -24,3 +24,10 @@ def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     FastAPI에서 사용할 UserRepository 객체를 의존성 주입으로 제공
     """
     return UserRepository(db)
+
+
+def get_user_service(db: Session = Depends(get_db)) -> UserService:
+    """
+    FastAPI에서 사용할 UserService 객체를 의존성 주입으로 제공
+    """
+    return UserService(db)
