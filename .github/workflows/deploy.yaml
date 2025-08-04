@@ -47,17 +47,17 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           # Pull latest image
-          docker pull ${{ secrets.DOCKER_USERNAME }}/ybita-app:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ybita-app:latest
           
           # Stop and remove existing container
-          docker stop ybita-app || true
-          docker rm ybita-app || true
+          sudo docker stop ybita-app || true
+          sudo docker rm ybita-app || true
           
           # Create custom network for isolation
-          docker network create app-network || true
+          sudo docker network create app-network || true
           
           # Run new container with enhanced security
-          docker run -d \
+          sudo docker run -d \
             --name ybita-app \
             --restart unless-stopped \
             --network app-network \
@@ -78,4 +78,4 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/ybita-app:latest
           
           # Clean up unused images
-          docker image prune -f
+          sudo docker image prune -f
