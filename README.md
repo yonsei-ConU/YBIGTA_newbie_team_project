@@ -474,3 +474,6 @@ database/
 | Rotten     | 부정 | `boring`, `worst`, `terrible`, `bad` |
 
 > ✍️ 감성별 키워드를 통해 플랫폼의 **표현 방식 + 리뷰 문화 차이**를 시각적으로 확인 가능
+
+# docker hub 주소
+https://hub.docker.com/repository/docker/nohyoobin/ybigta-app/general
