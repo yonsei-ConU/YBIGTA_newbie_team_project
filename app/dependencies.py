@@ -30,4 +30,5 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     """
     FastAPI에서 사용할 UserService 객체를 의존성 주입으로 제공
     """
-    return UserService(db)
+    user_repo = UserRepository(db)
+    return UserService(user_repo)
