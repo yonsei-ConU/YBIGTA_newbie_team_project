@@ -481,10 +481,37 @@ database/
 
 
 # docker hub 주소
-https://hub.docker.com/repository/docker/nohyoobin/ybigta-app/general
+**Docker Hub Repository**: https://hub.docker.com/repository/docker/nohyoobin/ybigta-app/general
+
+# 📸 AWS 과제 수행 증명 사진
+
+# 1. 🐳 GitHub Actions CI/CD 파이프라인
+![GitHub Actions Workflow](aws/github_action.png)
+
+
+### 2. 🔐 사용자 로그인 API
+![User Login API](aws/login.png)
+
+
+### 3. 📝 사용자 등록 API
+![User Registration API](aws/register.png)
+
+
+### 4. 🔄 비밀번호 변경 API
+![Password Update API](aws/update-password.png)
+
+
+### 5. 🗑️ 사용자 삭제 API
+![User Deletion API](aws/delete.png)
+
+
+### 6. 🔧 리뷰 전처리 API
+![Review Preprocessing API](aws/preprocess.png)
+
+
+
 
 # Trouble Shooting & 배운점
-
 ## ⚙️ Troubleshooting
 
 ### 1. EC2 + Docker + FastAPI 배포 이슈
@@ -605,3 +632,4 @@ https://hub.docker.com/repository/docker/nohyoobin/ybigta-app/general
 - 에러 메시지가 유념해서 보기 + 공식문서와 로그 체크
 - 단계를 쪼개서 점검하는 게 가장 빠르다.
 - 로컬과 배포 환경은 다르다. 별개로 확인 필요
+
