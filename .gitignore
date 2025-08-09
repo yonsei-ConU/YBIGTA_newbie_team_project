@@ -210,4 +210,28 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# Security and sensitive files
 .pem
+*.pem
+.env
+.env.local
+.env.production
+.env.staging
+
+# Streamlit
+.streamlit/
+
+# Large binary files
+*.faiss
+st_app/db/faiss_index/*.faiss
+
+# Temporary and test files
+test_router.py
+test_rag_node.py
+check_data.py
+insert_data.py
+notebook.pem
+
+# PDF and Excel files (assignment documents)
+*.pdf
+*.xlsx
