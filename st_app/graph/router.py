@@ -12,6 +12,7 @@ from st_app.graph.nodes.chat_node import chat_node
 from st_app.graph.nodes.subject_info_node import subject_info_node
 from st_app.graph.nodes.rag_review_node import rag_review_node
 from st_app.rag.llm import call_llm
+import streamlit as st
 
 
 def decide_route(state: State) -> str:
@@ -22,6 +23,9 @@ def decide_route(state: State) -> str:
     user_msg = state["user_input"]
     
     print(f"🔍 라우팅 분석 중: '{user_msg}'")
+    
+    # 라우팅 정보를 Streamlit에 표시
+    st.info(f"🔍 라우팅 분석 중: '{user_msg}'")
     
     # LLM 기반 라우팅을 위한 프롬프트
     routing_prompt = f"""
@@ -52,20 +56,25 @@ rag_review_node
         # 응답 검증 및 정규화
         if "chat" in route_decision:
             print("✅ chat_node로 라우팅")
+            st.success("✅ chat_node로 라우팅됨")
             return "chat_node"
         elif "subject" in route_decision or "info" in route_decision:
             print("✅ subject_info_node로 라우팅")
+            st.success("✅ subject_info_node로 라우팅됨")
             return "subject_info_node"
         elif "rag" in route_decision or "review" in route_decision:
             print("✅ rag_review_node로 라우팅")
+            st.success("✅ rag_review_node로 라우팅됨")
             return "rag_review_node"
         else:
             print(f"⚠️ 예상치 못한 응답: '{route_decision}' -> chat_node로 기본 라우팅")
+            st.warning(f"⚠️ 예상치 못한 응답: '{route_decision}' -> chat_node로 기본 라우팅")
             # 기본값으로 일반 대화 노드
             return "chat_node"
             
     except Exception as e:
         print(f"❌ 라우팅 결정 중 오류 발생: {e}")
+        st.error(f"❌ 라우팅 결정 중 오류 발생: {e}")
         # 오류 발생 시 기본값으로 일반 대화 노드
         return "chat_node"
 
@@ -103,14 +112,12 @@ def build_graph() -> StateGraph:
         }
     )
 
-    # 각 노드에서 Chat Node로 복귀 (과제 요구사항)
-    workflow.add_edge("subject_info_node", "chat_node")
-    workflow.add_edge("rag_review_node", "chat_node")
-    
-    # Chat Node에서만 종료
+    # 각 노드 처리 후 Chat Node로 복귀
     workflow.add_edge("chat_node", END)
+    workflow.add_edge("subject_info_node", END)
+    workflow.add_edge("rag_review_node", END)
 
-    # 시작점
+    # 시작점 설정
     workflow.set_entry_point("router")
 
     return workflow

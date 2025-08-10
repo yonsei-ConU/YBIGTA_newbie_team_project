@@ -10,6 +10,7 @@ from st_app.utils.state import State
 from st_app.rag.retriever import retriever
 from st_app.rag.llm import call_llm
 from st_app.rag.prompt import create_review_summary_prompt
+import streamlit as st
 
 
 def rag_review_node(state: State) -> State:
@@ -17,6 +18,8 @@ def rag_review_node(state: State) -> State:
     리뷰 검색 후 LLM으로 최종 응답 생성
     """
     print("🚀 rag_review_node 시작!")
+    st.info("🚀 RAG Review Node 실행 중...")
+    
     query = state["user_input"]
     print(f"📝 사용자 질문: '{query}'")
     
@@ -45,8 +48,12 @@ def rag_review_node(state: State) -> State:
         doc_count = len(docs) if docs else 0
         print(f"✅ FAISS 검색 완료! 검색된 문서 수: {doc_count}")
         
+        # 검색 결과를 Streamlit에 표시
+        st.success(f"✅ FAISS 검색 완료! 검색된 문서 수: {doc_count}개")
+        
         if not docs:
             print("❌ 검색된 문서가 없음")
+            st.warning("❌ 검색된 문서가 없습니다.")
             state["messages"].append({
                 "role": "assistant",
                 "content": "죄송합니다. 관련된 리뷰를 찾을 수 없습니다. "
@@ -57,6 +64,7 @@ def rag_review_node(state: State) -> State:
             
     except Exception as e:
         print(f"❌ FAISS 검색 중 오류 발생: {e}")
+        st.error(f"❌ FAISS 검색 중 오류 발생: {e}")
         state["messages"].append({
             "role": "assistant",
             "content": f"리뷰 검색 중 오류가 발생했습니다: {e}"
@@ -70,6 +78,12 @@ def rag_review_node(state: State) -> State:
     # 검색된 리뷰 수 정보 추가
     search_info = f"총 {len(docs)}개의 리뷰를 검색했습니다."
     print(f"📊 검색 정보: {search_info}")
+    
+    # 검색 결과 미리보기 표시
+    if docs:
+        with st.expander("🔍 검색된 리뷰 미리보기"):
+            for i, doc in enumerate(docs[:3]):  # 처음 3개만 표시
+                st.write(f"**리뷰 {i+1}:** {doc.get('content', '')[:100]}...")
     
     # 검색 결과를 텍스트로 변환
     print("📝 검색 결과를 텍스트로 변환 중...")
@@ -99,17 +113,20 @@ def rag_review_node(state: State) -> State:
         
     except Exception as e:
         print(f"❌ LLM 호출 중 오류 발생: {e}")
-        llm_response = (
-            f"리뷰 분석 중 오류가 발생했습니다: {e}\n\n"
-            f"검색된 리뷰:\n{context_text}"
-        )
+        st.error(f"❌ LLM 호출 중 오류 발생: {e}")
+        state["messages"].append({
+            "role": "assistant",
+            "content": f"응답 생성 중 오류가 발생했습니다: {e}"
+        })
+        return state
 
-    # 응답을 메시지에 추가
-    print("💬 응답을 메시지에 추가 중...")
+    # 최종 응답을 상태에 추가
     state["messages"].append({
         "role": "assistant",
         "content": llm_response
     })
     
     print("✅ rag_review_node 완료!")
+    st.success("✅ RAG Review Node 완료!")
+    
     return state

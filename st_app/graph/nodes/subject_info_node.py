@@ -10,6 +10,7 @@ from pathlib import Path
 from st_app.utils.state import State
 from st_app.rag.llm import call_llm
 from st_app.rag.prompt import create_movie_info_prompt
+import streamlit as st
 
 
 SUBJECTS_PATH = (Path(__file__).parent.parent.parent / 
@@ -28,8 +29,14 @@ def subject_info_node(state: State) -> State:
     """
     user_input에서 주제를 추출하고, 해당 주제의 기본 정보를 찾아서 LLM으로 자연스럽게 응답함.
     """
+    print("🚀 subject_info_node 시작!")
+    st.info("🚀 Subject Info Node 실행 중...")
+    
     subjects = load_subjects()
     user_msg = state["user_input"]
+    
+    print(f"📝 사용자 질문: '{user_msg}'")
+    print(f"📚 로드된 subjects 수: {len(subjects)}개")
 
     # 사용자 질문에서 주제 추출 및 정보 검색
     found_info = None
@@ -42,15 +49,28 @@ def subject_info_node(state: State) -> State:
             break
 
     if found_info:
+        print(f"✅ 매칭된 주제: '{found_key}'")
+        st.success(f"✅ 매칭된 주제: '{found_key}'")
+        
+        # 찾은 정보 미리보기 표시
+        with st.expander("📋 찾은 정보 미리보기"):
+            for k, v in found_info.items():
+                st.write(f"**{k}:** {v}")
+        
         # 프롬프트 템플릿을 사용하여 정보 제공
         try:
             prompt = create_movie_info_prompt(user_msg, found_info)
             reply = call_llm(prompt)
-        except Exception:
+        except Exception as e:
+            print(f"❌ LLM 호출 실패: {e}")
+            st.error(f"❌ LLM 호출 실패: {e}")
             # LLM 호출 실패 시 기본 정보만 제공
             info_text = "\n".join(f"{k}: {v}" for k, v in found_info.items())
             reply = f"[{found_key}] 정보:\n{info_text}"
     else:
+        print("❌ 매칭된 주제를 찾지 못함")
+        st.warning("❌ 매칭된 주제를 찾지 못했습니다.")
+        
         # 매칭 실패 시 LLM에게 도움 요청
         prompt = f"""사용자가 다음 질문을 했습니다: {user_msg}
 
@@ -59,8 +79,14 @@ def subject_info_node(state: State) -> State:
         
         try:
             reply = call_llm(prompt)
-        except Exception:
+        except Exception as e:
+            print(f"❌ LLM 호출 실패: {e}")
+            st.error(f"❌ LLM 호출 실패: {e}")
             reply = "죄송하지만 해당 대상의 정보를 찾지 못했습니다."
 
     state["messages"].append({"role": "assistant", "content": reply})
+    
+    print("✅ subject_info_node 완료!")
+    st.success("✅ Subject Info Node 완료!")
+    
     return state
