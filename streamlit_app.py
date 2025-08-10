@@ -5,12 +5,6 @@ from st_app.utils.state import new_state
 # 페이지 기본 설정
 st.set_page_config(page_title="YBIGTA RAG-Agent Demo", layout="centered")
 
-# API 키 디버깅 (개발용 - 배포 시 제거)
-if st.secrets.get("UPSTAGE_API_KEY"):
-    st.success("✅ API 키가 설정되어 있습니다.")
-else:
-    st.error("❌ API 키가 설정되지 않았습니다.")
-
 st.title("🤖 YBIGTA RAG-Agent Chatbot")
 
 # 세션 상태 초기화

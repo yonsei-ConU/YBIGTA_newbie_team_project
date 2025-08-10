@@ -16,12 +16,9 @@ def call_llm(prompt: str) -> str:
         if not upstage_api_key:
             raise ValueError("UPSTAGE_API_KEY가 비어있습니다")
     except KeyError:
-        st.error("⚠️ UPSTAGE_API_KEY가 Streamlit secrets에 설정되지 않았습니다.")
-        st.info("💡 Streamlit Cloud의 Settings → Secrets에서 API 키를 설정해주세요.")
-        return "API 키가 설정되지 않아 응답을 생성할 수 없습니다."
+        return "API 키가 설정되지 않았습니다."
     except Exception as e:
-        st.error(f"⚠️ API 키 설정 오류: {str(e)}")
-        return "API 키 설정에 문제가 있어 응답을 생성할 수 없습니다."
+        return f"API 키 오류: {str(e)}"
 
     LLM_URL = "https://api.upstage.ai/v1/chat/completions"
     
@@ -41,8 +38,6 @@ def call_llm(prompt: str) -> str:
         data = resp.json()
         return data["choices"][0]["message"]["content"].strip()
     except requests.exceptions.RequestException as e:
-        st.error(f"⚠️ API 호출 오류: {str(e)}")
-        return "API 호출 중 오류가 발생했습니다."
+        return f"API 호출 오류: {str(e)}"
     except Exception as e:
-        st.error(f"⚠️ 응답 처리 오류: {str(e)}")
-        return "응답 처리 중 오류가 발생했습니다."
+        return f"응답 처리 오류: {str(e)}"

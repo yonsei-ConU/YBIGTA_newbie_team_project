@@ -16,11 +16,8 @@ def get_embedding(text: str) -> list[float]:
         if not upstage_api_key:
             raise ValueError("UPSTAGE_API_KEY가 비어있습니다")
     except KeyError:
-        st.error("⚠️ UPSTAGE_API_KEY가 Streamlit secrets에 설정되지 않았습니다.")
-        st.info("💡 Streamlit Cloud의 Settings → Secrets에서 API 키를 설정해주세요.")
         return []
     except Exception as e:
-        st.error(f"⚠️ API 키 설정 오류: {str(e)}")
         return []
     
     if not text.strip():
@@ -42,9 +39,5 @@ def get_embedding(text: str) -> list[float]:
         resp.raise_for_status()
         data = resp.json()
         return data["data"][0]["embedding"]
-    except requests.exceptions.RequestException as e:
-        st.error(f"⚠️ Embedding API 호출 오류: {str(e)}")
-        return []
     except Exception as e:
-        st.error(f"⚠️ Embedding 응답 처리 오류: {str(e)}")
         return []
