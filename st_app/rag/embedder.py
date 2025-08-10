@@ -4,23 +4,25 @@ embedder.py
 텍스트를 Upstage Embedding API를 사용해 벡터로 변환하는 함수.
 """
 
-import os
+import streamlit as st
 import requests
-
-UPSTAGE_API_KEY = os.environ.get("UPSTAGE_API_KEY")
-EMBEDDING_URL = "https://api.upstage.ai/v1/embeddings"
 
 def get_embedding(text: str) -> list[float]:
     """
     주어진 텍스트를 임베딩 벡터로 변환함.
     """
-    if not UPSTAGE_API_KEY:
-        raise ValueError("환경 변수 UPSTAGE_API_KEY가 설정되지 않음")
+    try:
+        upstage_api_key = st.secrets["UPSTAGE_API_KEY"]
+    except KeyError:
+        raise ValueError("Streamlit secrets에서 UPSTAGE_API_KEY가 설정되지 않음")
+    
     if not text.strip():
         return []
 
+    EMBEDDING_URL = "https://api.upstage.ai/v1/embeddings"
+    
     headers = {
-        "Authorization": f"Bearer {UPSTAGE_API_KEY}",
+        "Authorization": f"Bearer {upstage_api_key}",
         "Content-Type": "application/json"
     }
     payload = {

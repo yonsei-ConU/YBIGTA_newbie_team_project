@@ -633,3 +633,302 @@ database/
 - 단계를 쪼개서 점검하는 게 가장 빠르다.
 - 로컬과 배포 환경은 다르다. 별개로 확인 필요
 
+# 🤖 RAG Agent 과제 - LangGraph 기반 멀티노드 챗봇 시스템
+
+## 📋 과제 개요
+
+이번 과제는 **RAG(Retrieval-Augmented Generation)**와 **Agent** 기술을 활용하여 수집한 영화 리뷰 데이터를 바탕으로 지능형 챗봇을 구현하는 것이 목표입니다.
+
+### 🎯 핵심 요구사항
+- **3개의 전문 노드**: Chat Node, Subject Info Node, RAG Review Node
+- **LangGraph 기반 조건부 라우팅**: LLM이 판단하여 유동적 라우팅
+- **Streamlit Cloud 데모**: 실제 서비스 가능한 웹 인터페이스
+- **실제 데이터 활용**: 수집된 영화 리뷰 데이터 기반
+
+---
+
+## 🏗️ 시스템 아키텍처
+
+### 📊 전체 시스템 구조
+```
+사용자 입력 → LangGraph Router → 전문 노드 → 응답 생성 → Chat Node 복귀
+     ↓              ↓              ↓           ↓           ↓
+Streamlit UI → LLM 라우팅 → 3개 노드 → LLM 응답 → 대화 지속
+```
+
+### 🔄 워크플로우
+1. **사용자 입력**: Streamlit 채팅 인터페이스
+2. **지능형 라우팅**: LLM이 입력을 분석하여 적절한 노드 선택
+3. **전문 처리**: 선택된 노드에서 전문적인 응답 생성
+4. **자동 복귀**: 처리 완료 후 Chat Node로 복귀하여 대화 지속
+
+---
+
+## 🧩 핵심 구성 요소
+
+### 1. **Chat Node** 💬
+- **역할**: 기본 대화, 인사, 감사, 기타 일반적인 질문 처리
+- **구현**: `st_app/graph/nodes/chat_node.py`
+- **특징**: 친근하고 자연스러운 대화 스타일
+
+### 2. **Subject Info Node** 📚
+- **역할**: 영화/제품의 기본 정보 제공 (감독, 출연진, 장르, 개봉일 등)
+- **구현**: `st_app/graph/nodes/subject_info_node.py`
+- **데이터**: `st_app/db/subject_information/subjects.json`
+- **지원 영화**: 봉준호 감독 작품들 (미키17, 기생충, 설국열차, 옥자)
+
+### 3. **RAG Review Node** 🔍
+- **역할**: 사용자가 궁금해하는 리뷰 내용을 검색하여 답변
+- **구현**: `st_app/graph/nodes/rag_review_node.py`
+- **기술**: FAISS 벡터 검색 + Upstage Solar LLM
+- **데이터**: 네이버 영화 리뷰 기반 임베딩 인덱스
+
+---
+
+## 🛠️ 기술 스택
+
+### **핵심 기술**
+- **LangGraph**: 멀티노드 워크플로우 관리
+- **FAISS**: 벡터 데이터베이스 (리뷰 검색)
+- **Upstage API**: 임베딩 생성 및 LLM 응답
+- **Streamlit**: 웹 인터페이스
+
+### **데이터 처리**
+- **임베딩**: Upstage Embedding API (`embedding-passage` 모델)
+- **생성**: Upstage Solar LLM (`solar-1-mini-chat` 모델)
+- **벡터 검색**: FAISS L2 거리 기반 검색
+
+---
+
+## 🚀 실행 방법
+
+### 1. **환경 설정**
+```bash
+# 의존성 설치
+pip install -r requirements.txt
+
+# 환경 변수 설정
+export UPSTAGE_API_KEY="your_api_key_here"
+```
+
+### 2. **FAISS 인덱스 구축** (최초 1회)
+```bash
+python build_faiss.py
+```
+
+### 3. **Streamlit 앱 실행**
+```bash
+streamlit run streamlit_app.py
+```
+
+### 4. **웹 접속**
+- 로컬: http://localhost:8501
+- Streamlit Cloud: [배포 링크 예정]
+
+---
+
+## 📁 RAG, Agent 관련 디렉토리 구조
+
+```
+YBIGTA_newbie_team_project/
+├── streamlit_app.py                    # Streamlit UI + LangGraph 실행 진입점
+├── build_faiss.py                      # FAISS 인덱스 구축 스크립트
+├── st_app/
+│   ├── db/
+│   │   ├── subject_information/        # 영화 기본 정보
+│   │   │   └── subjects.json          # 봉준호 감독 작품 정보
+│   │   └── faiss_index/               # 벡터 데이터베이스
+│   │       ├── index.faiss            # FAISS 인덱스
+│   │       └── meta.json              # 메타데이터
+│   ├── rag/                           # RAG 시스템
+│   │   ├── embedder.py                # 텍스트 임베딩 생성
+│   │   ├── retriever.py               # FAISS 검색 로직
+│   │   ├── prompt.py                  # 프롬프트 템플릿
+│   │   └── llm.py                     # LLM 호출 함수
+│   ├── graph/                         # LangGraph 워크플로우
+│   │   ├── nodes/
+│   │   │   ├── chat_node.py           # 기본 대화 처리
+│   │   │   ├── subject_info_node.py   # 영화 정보 제공
+│   │   │   └── rag_review_node.py     # 리뷰 검색 및 요약
+│   │   └── router.py                  # 조건부 라우팅 정의
+│   └── utils/
+│       └── state.py                   # 세션 상태 관리
+└── requirements.txt                    # 의존성 목록
+```
+
+---
+
+## 🎯 구현 세부사항
+
+### **1. LLM 기반 지능형 라우팅**
+```python
+def decide_route(state: State) -> str:
+    """
+    사용자 입력을 분석하여 적절한 노드로 라우팅함.
+    LLM이 판단하여 유동적으로 조건부 라우팅을 진행함.
+    """
+    user_msg = state["user_input"]
+    
+    print(f"🔍 라우팅 분석 중: '{user_msg}'")
+    
+    # LLM 기반 라우팅을 위한 프롬프트
+    routing_prompt = f"""
+당신은 사용자의 질문을 분석하여 적절한 노드로 라우팅하는 AI 어시스턴트입니다.
+
+사용자 질문: "{user_msg}"
+
+다음 세 가지 노드 중 하나를 선택하세요:
+
+1. chat_node: 일반적인 대화, 인사, 감사, 기타 질문
+2. subject_info_node: 영화/제품의 정보, 줄거리, 감독, 출연진, 장르, 개봉일 등에 대한 질문
+3. rag_review_node: 리뷰, 후기, 평가, 사용자 경험, 추천 등에 대한 질문
+
+응답은 반드시 다음 중 하나만 출력하세요 (하이픈이나 다른 문자 없이):
+chat_node
+subject_info_node
+rag_review_node
+
+추가 설명이나 다른 텍스트는 포함하지 마세요.
+"""
+```
+
+### **2. RAG 파이프라인**
+```python
+# 1. 쿼리 임베딩 생성
+query_embedding = get_embedding(query)
+
+# 2. FAISS 벡터 검색
+scores, indices = index.search(query_vector, top_k)
+
+# 3. 컨텍스트 구성
+context_text = "\n\n".join([doc['content'] for doc in docs])
+
+# 4. LLM 응답 생성
+prompt = create_review_summary_prompt(query, context_text)
+response = call_llm(prompt)
+```
+
+### **3. 멀티노드 상태 관리**
+```python
+class State(TypedDict):
+    user_input: str           # 사용자 입력
+    messages: List[Dict]      # 대화 히스토리
+    route: str               # 라우팅 결정
+    retrieved_docs: List[Dict] # 검색된 문서
+```
+
+---
+
+## 🎨 사용 예시
+
+### **일반 대화 (Chat Node)**
+```
+사용자: 안녕하세요!
+봇: 안녕하세요! 무엇을 도와드릴까요? 😊
+```
+
+### **영화 정보 요청 (Subject Info Node)**
+```
+사용자: 미키17 영화에 대해 알려주세요
+봇: [미키17] 정보:
+- 제목: 미키17 (Mickey 17)
+- 감독: 봉준호
+- 출시연도: 2025
+- 장르: SF, 드라마
+- 주연: 로버트 패틴슨
+- 특징: 인간 복제, 생명윤리, 노동자 문제
+- 평점: 6.5/10
+- 리뷰수: 251개
+```
+
+### **리뷰 검색 (RAG Review Node)**
+```
+사용자: 미키17 리뷰에서 로버트 패틴슨에 대한 평가가 어때?
+봇: 검색된 리뷰를 분석한 결과, 로버트 패틴슨에 대한 평가는 다음과 같습니다:
+
+1. 연기력: 대부분의 리뷰에서 그의 연기력을 높이 평가하고 있습니다. 특히 1인 2역을 소화한 점이 인상적이라는 평가가 많습니다.
+
+2. 캐릭터 표현: 미키와 기타 캐릭터의 차별화된 연기가 뛰어나다는 의견이 지배적입니다.
+
+3. 전체적인 평가: 전반적으로 긍정적인 평가가 우세하며, 영화의 성공에 기여했다는 의견이 많습니다.
+
+총 15개의 관련 리뷰를 검색했습니다.
+```
+
+---
+
+## 🔧 기술적 특징
+
+### **1. 확장 가능한 아키텍처**
+- 새로운 노드 추가 용이
+- 다양한 데이터 소스 지원 가능
+- 모듈화된 구조로 유지보수 편의
+
+### **2. 실제 데이터 기반**
+- 네이버 영화 리뷰 100개 기반 FAISS 인덱스
+- 봉준호 감독 작품 정보 데이터베이스
+- 실제 사용자 리뷰 데이터 활용
+
+### **3. 다국어 지원**
+- 한국어/영어 리뷰 모두 처리 가능
+- Upstage API의 다국어 지원 활용
+
+### **4. 프로덕션 레벨 구현**
+- API 키 보안 관리
+- 에러 핸들링 및 로깅
+- 세션 상태 관리
+
+## 🌐 Live Demo
+
+**Streamlit Cloud 배포 링크**: [https://ybigta-rag-agent.streamlit.app](https://ybigta-rag-agent.streamlit.app)
+
+![작동 화면](작동화면_캡처.png)
+
+---
+
+## 🎯 과제 완성도
+
+### ✅ **완료된 요구사항**
+- [v] **3개 챗봇 노드 구현**: Chat, Subject Info, RAG Review
+- [v] **LangGraph 조건부 라우팅**: LLM 기반 지능형 라우팅
+- [v] **RAG 시스템**: FAISS + 임베딩 + LLM 완전 구현
+- [v] **Streamlit 웹 인터페이스**: 채팅 UI 완성
+- [v] **자동 복귀**: 처리 후 Chat Node로 복귀
+- [v] **실제 데이터 활용**: 영화 리뷰 데이터 기반
+- [v] **Streamlit Cloud 배포**: 실제 서비스 링크
+
+### 🔧 **추가 개선 사항**
+- [ ] **Draw.io 다이어그램**: 시스템 아키텍처 시각화
+- [ ] **성능 최적화**: 더 많은 리뷰 데이터 활용
+
+---
+
+## 🚀 향후 발전 방향
+
+### **1. 데이터 확장**
+- 더 많은 영화 리뷰 데이터 수집
+- 다양한 플랫폼 리뷰 통합
+- 실시간 데이터 업데이트
+
+### **2. 기능 개선**
+- 감정 분석 기반 응답
+- 개인화된 추천 시스템
+- 다중 모달 지원 (이미지, 음성)
+
+### **3. 성능 최적화**
+- 캐싱 시스템 도입
+- 배치 처리 최적화
+- 분산 처리 지원
+
+---
+
+## 📞 문의 및 기여
+
+이 프로젝트는 YBIGTA 27기 팀플 3조에서 개발되었습니다.
+- **팀원**: 노유빈, 문영운, 이재열
+- **기술 스택**: LangGraph, FAISS, Upstage API, Streamlit
+- **데이터**: 실제 영화 리뷰 데이터 기반
+
+---
+
+*이 시스템은 RAG와 Agent 기술의 실제 적용 사례를 보여주며, 확장 가능한 챗봇 시스템의 기본 구조를 제공합니다.*

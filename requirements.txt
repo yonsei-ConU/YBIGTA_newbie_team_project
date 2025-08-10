@@ -57,3 +57,4 @@ langgraph
 streamlit
 langchain
 langchain-core
+upstage
