@@ -28,13 +28,15 @@ def rag_review_node(state: State) -> State:
     import re
     number_match = re.search(r'(\d+)개?\s*리뷰', query)
     if number_match:
-        top_k = min(int(number_match.group(1)), 50)  # 최대 50개로 제한
+        top_k = min(int(number_match.group(1)), 99)  # 최대 99개로 제한 (전체 리뷰)
         print(f"🔢 숫자 매칭: {number_match.group(1)}개 리뷰 요청")
     
-    # "모든", "전체" 등의 키워드가 있으면 더 많이 검색
-    if any(keyword in query for keyword in ['모든', '전체', '많이', 'all', 'many']):
-        top_k = 30
-        print(f"🔍 키워드 매칭: '모든/전체' 키워드 감지, top_k를 30으로 설정")
+    # "모든", "전체" 등의 키워드가 있으면 모든 리뷰 검색
+    if any(keyword in query for keyword in 
+           ['모든', '전체', '많이', 'all', 'many', '전부']):
+        top_k = 99  # 전체 리뷰 수
+        print("🔍 키워드 매칭: '모든/전체' 키워드 감지, "
+              "top_k를 99로 설정 (전체 리뷰)")
     
     print(f"🎯 최종 top_k: {top_k}")
     
@@ -86,8 +88,23 @@ def rag_review_node(state: State) -> State:
     # 프롬프트 생성 및 LLM 호출
     try:
         print("🤖 LLM 프롬프트 생성 중...")
+        
+        # 이전 대화 맥락 구성 (최근 2개 메시지만 포함)
+        conversation_context = ""
+        if len(state["messages"]) > 0:
+            recent_messages = state["messages"][-2:]  # 최근 2개 메시지만
+            conversation_context = "\n\n**이전 대화 맥락:**\n"
+            for msg in recent_messages:
+                role = "사용자" if msg["role"] == "user" else "어시스턴트"
+                conversation_context += f"{role}: {msg['content']}\n"
+        
         # 검색 정보를 포함한 프롬프트 생성
         enhanced_context = f"{search_info}\n\n{context_text}"
+        
+        # 이전 대화 맥락이 있으면 포함
+        if conversation_context:
+            enhanced_context = f"{conversation_context}\n\n{enhanced_context}"
+        
         prompt = create_review_summary_prompt(query, enhanced_context)
         print(f"📝 생성된 프롬프트 길이: {len(prompt)} 문자")
         print(f"📝 프롬프트 미리보기: {prompt[:300]}...")
