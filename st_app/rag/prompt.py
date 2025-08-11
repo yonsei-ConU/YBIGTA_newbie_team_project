@@ -51,7 +51,8 @@ def create_review_summary_prompt(query: str, context: str) -> str:
 - 사용자가 "뭐든~ 아무거나~"라고 했다면 
   구체적인 영화 추천이나 리뷰를 제안하세요
 
-형식은 자유롭게 하되, 너무 딱딱하지 않게 자연스럽게 작성해주세요."""
+형식은 자유롭게 하되, 너무 딱딱하지 않게 자연스럽게 작성해주세요.
+"""
 
 
 def create_movie_info_prompt(query: str, movie_info: dict) -> str:
